@@ -1,4 +1,4 @@
-use std::{env, path::PathBuf};
+use std::path::PathBuf;
 use rhai::{Engine, EvalAltResult};
 use clap::Parser;
 
@@ -18,6 +18,7 @@ struct Args {
 }
 
 const ENVCODE: &str = "CODE";
+const FILECODE: &str = ".rr.rhai";
 
 pub fn main() -> Result<(), Box<EvalAltResult>>
 {
@@ -35,8 +36,9 @@ pub fn main() -> Result<(), Box<EvalAltResult>>
     if let Some(code) = codevar::get_code_from_env(codevar){
         // Execute the script
         engine.run(code.as_str())?;
-    }else{
+    }else if let Some(path_code) = codefile::get_code_from_file(FILECODE){
         // Try load the code of the script from a file
+        engine.run_file(path_code)?;
     }
 
     Ok(())
