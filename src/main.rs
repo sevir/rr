@@ -28,7 +28,7 @@ pub fn main() -> Result<(), Box<EvalAltResult>>
 {
     let args = Args::parse(); // Clap parser
 
-    let engine = Engine::new(); // Rhai parser
+    let mut engine = Engine::new(); // Rhai parser
 
     // Execute code if is set in env variable
     let codevar = match args.codevar.as_deref(){
@@ -40,6 +40,18 @@ pub fn main() -> Result<(), Box<EvalAltResult>>
         Some(v) => v.as_os_str().to_str().unwrap(),
         None => FILECODE
     };
+
+/*     // Tasks support
+    let mut taskslist: Vec<String> = Vec::new();
+
+    // Add function for tasks declarations
+    fn add_task(task_name: &str, function_name: &str) {
+        taskslist.push(task_name.to_string());
+    }
+    fn add_task_with_desc(){
+
+    }
+    engine.register_fn("task", add_task).register_fn("task", add_task_with_desc); */
 
     // Try to load the code from the env variable
     if let Some(code) = codevar::get_code_from_env(codevar){
