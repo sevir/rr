@@ -32,11 +32,16 @@ pub fn main() -> Result<(), Box<EvalAltResult>>
         None => ENVCODE // Default env key
     };
 
+    let scriptfile = match args.scriptfile.as_deref(){
+        Some(v) => v.as_os_str().to_str().unwrap(),
+        None => FILECODE
+    };
+
     // Try to load the code from the env variable
     if let Some(code) = codevar::get_code_from_env(codevar){
         // Execute the script
         engine.run(code.as_str())?;
-    }else if let Some(path_code) = codefile::get_code_from_file(FILECODE){
+    }else if let Some(path_code) = codefile::get_code_from_file(scriptfile){
         // Try load the code of the script from a file
         engine.run_file(path_code)?;
     }
