@@ -1,9 +1,11 @@
 use std::path::PathBuf;
 use rhai::{Engine, EvalAltResult, Scope};
 use clap::Parser;
+use tasks::{Task, get_tasks, get_task_function_name};
 
 mod codevar;
 mod codefile;
+mod tasks;
 
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]
@@ -28,7 +30,7 @@ pub fn main() -> Result<(), Box<EvalAltResult>>
 {
     let args = Args::parse(); // Clap parser
 
-    let mut engine = Engine::new(); // Rhai parser
+    let engine = Engine::new(); // Rhai parser
 
     // Execute code if is set in env variable
     let codevar = match args.codevar.as_deref(){
@@ -40,18 +42,6 @@ pub fn main() -> Result<(), Box<EvalAltResult>>
         Some(v) => v.as_os_str().to_str().unwrap(),
         None => FILECODE
     };
-
-/*     // Tasks support
-    let mut taskslist: Vec<String> = Vec::new();
-
-    // Add function for tasks declarations
-    fn add_task(task_name: &str, function_name: &str) {
-        taskslist.push(task_name.to_string());
-    }
-    fn add_task_with_desc(){
-
-    }
-    engine.register_fn("task", add_task).register_fn("task", add_task_with_desc); */
 
     // Try to load the code from the env variable
     if let Some(code) = codevar::get_code_from_env(codevar){
@@ -73,11 +63,22 @@ pub fn main() -> Result<(), Box<EvalAltResult>>
         // Try load the code of the script from a file
         let ast = engine.compile_file(path_code)?;
 
+        let tasklist:Vec<Task> = get_tasks(&ast);
+
         match args.task.as_deref(){
             Some(task_name) => {
                 // Execute function by name
                 let mut scope = Scope::new();
-                engine.call_fn_raw(&mut scope, &ast, true, true, task_name, None, [])?;
+                let task_function = get_task_function_name(&tasklist, task_name);
+                match task_function {
+                    Ok(task_function_name) => {
+                        engine.call_fn_raw(&mut scope, &ast, true, true, task_function_name, None, [])?;
+                    },
+                    _ => {
+                        println!("Not found the task {} in the code", task_name);
+                    }
+                }
+                
             },
             None => {
                 // Runs the code without task

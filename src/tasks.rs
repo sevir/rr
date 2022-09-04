@@ -1,4 +1,5 @@
 use regex::Regex;
+use rhai::{AST};
 
 #[derive(Debug)]
 #[allow(dead_code)]
@@ -8,7 +9,7 @@ pub struct Task{
     desc: Option<String>
 }
 
-pub fn get_tasks(ast: &rhai::AST) -> Vec<Task>{
+pub fn get_tasks(ast: &AST) -> Vec<Task>{
     let mut tasklist: Vec<Task> = Vec::new();
 
     for declared_function in ast.iter_functions(){
