@@ -9,6 +9,8 @@ description = "A Rhai scripting runner Swiss Tool for Devops"
 [dependencies]
 clap = { version = "3.2.17", features = ["derive"] }
 dirs = "4.0.0"
-rhai = { version = "1.9.1", features = ["serde", "metadata"] }
+rhai = { version = "1.10.0", features = ["serde", "metadata"] }
+rhai-rand = "0.1"
+rhai-env = { git = "https://github.com/sevir/rhai-env" }
 regex = "1.6.0"
 serde = "1.0.144"

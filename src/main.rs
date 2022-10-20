@@ -1,5 +1,8 @@
 use std::path::PathBuf;
 use rhai::{Engine, EvalAltResult, Scope};
+use rhai::packages::Package;    // needed for 'Package' trait
+use rhai_rand::RandomPackage;
+use rhai_env::EnvPackage;
 use clap::Parser;
 use tasks::{Task, get_tasks, get_task_function_name};
 
@@ -30,7 +33,11 @@ pub fn main() -> Result<(), Box<EvalAltResult>>
 {
     let args = Args::parse(); // Clap parser
 
-    let engine = Engine::new(); // Rhai parser
+    let mut engine = Engine::new(); // Rhai parser
+    let random = RandomPackage::new();
+    let envpkg = EnvPackage::new();
+    random.register_into_engine(&mut engine);
+    envpkg.register_into_engine(&mut engine);
 
     // Execute code if is set in env variable
     let codevar = match args.codevar.as_deref(){
