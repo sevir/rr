@@ -1,6 +1,6 @@
 [package]
 name = "rr"
-version = "0.3.0"
+version = "0.4.0"
 edition = "2021"
 description = "A Rhai scripting runner Swiss Tool for Devops"
 
@@ -11,6 +11,7 @@ clap = { version = "3.2.17", features = ["derive"] }
 dirs = "4.0.0"
 rhai = { version = "1.10.0", features = ["serde", "metadata"] }
 rhai-rand = "0.1"
-rhai-env = { git = "https://github.com/sevir/rhai-env" }
+rhai-env = { git = "https://github.com/sevir/rhai-env.git" }
+rhai_http = { git = "https://github.com/sevir/rhai-http.git" }
 regex = "1.6.0"
 serde = "1.0.144"

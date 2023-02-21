@@ -3,6 +3,7 @@ use rhai::{Engine, EvalAltResult, Scope};
 use rhai::packages::Package;    // needed for 'Package' trait
 use rhai_rand::RandomPackage;
 use rhai_env::EnvPackage;
+use rhai_http::*;
 use clap::Parser;
 use tasks::{Task, get_tasks, get_task_function_name};
 
@@ -36,8 +37,13 @@ pub fn main() -> Result<(), Box<EvalAltResult>>
     let mut engine = Engine::new(); // Rhai parser
     let random = RandomPackage::new();
     let envpkg = EnvPackage::new();
+    let http = HttpPackage::new();
     random.register_into_engine(&mut engine);
     envpkg.register_into_engine(&mut engine);
+    http.register_into_engine(&mut engine);
+
+    engine.register_type_with_name::<Http>("Http")
+        .register_fn("new_http", Http::new);
 
     // Execute code if is set in env variable
     let codevar = match args.codevar.as_deref(){
